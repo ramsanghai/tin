@@ -1,0 +1,41 @@
+{
+  "package_format": "tin-workflow-package-v1",
+  "definition": {
+    "key": "growth.github_engagement_summary",
+    "title": "Analyze GitHub Repository Engagement",
+    "description": "Parse repository data from GitHub: activity metrics, commit velocity, issue resolution, and growth signals to identify engagement bottlenecks.",
+    "version": "1.0.0",
+    "executor": "workflow.code",
+    "schedule_modes": ["on_demand"],
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "repo_data": {
+          "type": "string",
+          "title": "GitHub Repository JSON Export",
+          "description": "Paste GitHub API data for the repository (repo metadata + recent commits + issues + releases)",
+          "minLength": 100,
+          "maxLength": 500000
+        }
+      },
+      "required": ["project_id", "repo_data"]
+    },
+    "code": {
+      "runtime": "python3.12.8-stdlib-v1",
+      "entrypoint": "main.py",
+      "files": ["main.py"],
+      "timeout_seconds": 30,
+      "output": {
+        "kind": "project.artifact",
+        "path": "reports/REPO_ENGAGEMENT_SUMMARY.md",
+        "media_type": "text/markdown",
+        "max_bytes": 100000
+      }
+    }
+  }
+}
